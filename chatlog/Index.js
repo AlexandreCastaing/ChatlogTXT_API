@@ -8,7 +8,7 @@ console.log("==-==-==-==-==-==-==-==");
 // libs
 const express = require('express'); 
 const app = express();
-var bodyParser = require('body-parser');
+let bodyParser = require('body-parser');
 
 let ChatlogServiceClass = require("./ChatlogService.js");
 let RoutesClass = require("./Routes.js");
