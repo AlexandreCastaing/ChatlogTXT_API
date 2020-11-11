@@ -3,41 +3,42 @@
 
 //todo: to remove require('shelljs/global');
 
-let StructMessageClass = require("./StructMessage.js");
+let StructClass = require("./Struct.js");
 
 const TextFile = class{
 
-    constructor(_ChatlogService){
+    constructor(_ChatlogService, _filename, _structType){
         this.chatlogService = _ChatlogService;
 
         this.fs = require('fs');
-        this.fileName = process.env.TXT_FILE;
+        this.fileName = _filename;
+        this.structType = _structType;
     };
 
-    Write_structMessage_File(_structMessage){
-        let dataFile = this.structMessageToDataFile(_structMessage);
+    Write_struct_File(_struct){
+        let dataFile = this.structToDataFile(_struct);
         this.writeOnFile(dataFile);
     }
 
-    Read_structMessages_File(){
-
-        let totalLengthSM = this.getStructMessageLength();
+    Read_struct_File(){
+       
+        let totalLengthSM = this.getStructLength();
         let contentFile = this.readOnFile(); // <- todo: optimise
 
-        let structMessages = [];
+        let structs = [];
 
         for(
-            let positionStructMessage = 0; 
-            positionStructMessage < contentFile.toString().length; 
-            positionStructMessage+= totalLengthSM
+            let positionStruct = 0; 
+            positionStruct < contentFile.toString().length; 
+            positionStruct+= totalLengthSM
             ){
-                let dataStructMessage = contentFile.substring(positionStructMessage, totalLengthSM + positionStructMessage);
-                let structMessage = this.dataFileToStructMessage(dataStructMessage);
-                structMessages.push(structMessage)
+                let dataStruct = contentFile.substring(positionStruct, totalLengthSM + positionStruct);
+                let struct = this.dataFileToStruct(dataStruct);
+                structs.push(struct)
 
             }
             
-        return structMessages;
+        return structs;
     }
 
     writeOnFile(_data){
@@ -120,11 +121,11 @@ const TextFile = class{
         return good;
     }
 
-    structMessageToDataFile(_structMessage){
+    structToDataFile(_struct){
         let dataFile = "";
         let position = 0;
 
-        _structMessage.Blocks.forEach(block => 
+        _struct.Blocks.forEach(block => 
             {
                 // trunc string
                 if(block.val == null) block.val = "";
@@ -138,26 +139,26 @@ const TextFile = class{
         return dataFile.toString();
     }
 
-    dataFileToStructMessage(_dataFile){
+    dataFileToStruct(_dataFile){
         let position = 0;
 
-        let structMessage = new StructMessageClass();
+        let struct = new StructClass(this.structType);
 
-        structMessage.Blocks.forEach(block => 
+        struct.Blocks.forEach(block => 
             {
                 block.val = _dataFile.substring(position, block.length + position );
 
                 position += block.length;
             }
         )
-        return structMessage;
+        return struct;
     }
 
-    // return total length StructMessage
-    getStructMessageLength(){
-        let v = 0;
-        let structMessage = new StructMessageClass();
-        structMessage.Blocks.forEach(block => 
+    // return total length Struct
+    getStructLength(){
+        let v = 0; 
+        let struct = new StructClass(this.structType); 
+        struct.Blocks.forEach(block => 
             {
                 v+=block.length;
             }
@@ -165,11 +166,11 @@ const TextFile = class{
         return v;
     }
 
-    // replace StructMessage
-    Replace_structMessage_File(_oldStructMessage, _newStructMessage){
+    // replace Struct
+    Replace_struct_File(_oldStruct, _newStruct){
 
-        let olddata = this.structMessageToDataFile(_oldStructMessage);
-        let newdata = this.structMessageToDataFile(_newStructMessage);
+        let olddata = this.structToDataFile(_oldStruct);
+        let newdata = this.structToDataFile(_newStruct);
         return this.replaceOnFile(olddata, newdata);
 
     }

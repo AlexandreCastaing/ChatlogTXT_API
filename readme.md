@@ -33,20 +33,7 @@ npm run prod
 
 ### Routes
 
-POST    /Message     
-body params:    iduser , isVisible , message , color , effect , font , pseudo , idChatlog
-
-GET     /Messages
-body params:    idChatlog
-
-GET     /Message
-body params:    idMessage
-
-PATCH   /Message
-body params:    idMessage , isVisible , message , color , effect , font
-
-DELETE  /Message
-body params:    idMessage
+(check the pdf for the routes).
 
 
 ### More infos
