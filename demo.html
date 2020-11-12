@@ -1,0 +1,83 @@
+<!doctype html>
+<html style='height:100%;'>
+    <body style='margin:0;width:100%;height:100%;'>
+
+        
+        <div style='font-size: 15px;'>
+            demo/debug API, html interface
+        </div>
+
+        <div>
+            <span id='chatlog' style='background-color: #ccc; float:left; width:49%;'>
+                <h2>CHATLOG</h2>
+
+                <div style='background-color: #dd9b48; float:left; width:99%; '>
+                    <span>idUser</span><input onKeyUp="" id='chatlog_idUser' style='font-size: 20px; margin: 6px; '>
+                </div>
+
+                <div id='chatlog_input'>
+                    
+                    <br><span>idChatlog</span><input id='chatlog_idChatlog' style='width:80px;'> || <span>nameChatlog</span><input id='chatlog_name' style='width:140px;'>
+                    <br><span>hasPassword</span><input id='chatlog_hasPassword' type="checkbox" >
+                    <br><span>password</span><input id='chatlog_password'> 
+                    <br><span>isVisible</span> <input id='chatlog_isVisible' type="checkbox" >        
+                    <br><span>description</span><input id='chatlog_description'>
+                    <br><span>color</span><input id='chatlog_color' value='#dddddd'>
+                    <br><span>effect</span><input id='chatlog_effect'>
+                    <br><span>font</span><input id='chatlog_font'>
+                    <br><span>icon</span><input id='chatlog_icon'>
+                    <br><span>colorMessages</span><input id='chatlog_colorMessages' value='#dddddd'>
+                    <br><span>effectMessages</span><input id='chatlog_effectMessages' value=''>
+                    <br><span>fontMessages</span><input id='chatlog_fontMessages' value=''>
+                    
+                </div>
+                <div id='chatlog_commit'>
+
+                    <br> <button id='chatlog_GET_CHATLOGS'>GET CHATLOGS</button> 
+                    <br> <button id='chatlog_GET_CHATLOG'>GET CHATLOG</button>
+                    <br> <button id='chatlog_POST_CHATLOG'>POST CHATLOG</button>
+                    <br> <button id='chatlog_UPDATE_CHATLOG'>UPDATE CHATLOG</button>
+                    <br> <button id='chatlog_DELETE_CHATLOG'>DELETE CHATLOG</button>
+
+                </div>      
+            </span>
+
+            <span id='message' style='background-color: #e7e7e7;  float:left; width:49%;''>
+                <h2>MESSAGE</h2>
+
+                <div style='background-color: #dd9b48; float:left; width:99%; '>
+                    <span>idUser</span><input onKeyUp="" id='message_idUser' style='font-size: 20px; margin: 6px; '>
+                </div>
+
+                <div id='message_input'>
+                    <br><span>idMessage </span><input id='message_idMessage'>
+                    <br><span>idChatlog</span><input id='message_idChatlog' style='width:80px;'> || <span>nameChatlog</span><input id='message_nameChatlog' style='width:140px;'>
+                    <br><span>password</span><input id='message_password'>
+                    <br><span>isVisible</span><input id='message_isVisible' type="checkbox" >  
+                    <br><span>pseudo</span><input id='message_pseudo'>
+                    <br><span>message</span><input id='message_message' style='width:350px;'>
+                    <br><span>color</span><input id='message_color' value='#dddddd'>
+                    <br><span>effect</span><br><span>idChatlog</span><input id='message_effect'>
+                    <br><span>font</span><input id='message_font'>
+                </div>
+                <div id='message_commit'>
+                    <br> <button id='message_GET_MESSAGES'>GET MESSAGES</button> 
+                    <br> <button id='message_GET_MESSAGE'>GET MESSAGE</button>
+                    <br> <button id='message_POST_MESSAGE'>POST MESSAGE</button>
+                    <br> <button id='message_UPDATE_MESSAGE'>UPDATE MESSAGE</button>
+                    <br> <button id='message_DELETE_MESSAGE'>DELETE MESSAGE</button>
+                </div>      
+            </span>
+        </div>
+
+        <div id='output'  style='background-color: #555; color:#bd9; float:left; width:99%;''>
+            <h2>OUTPUT:</h2>
+            <pre id='display'>
+                OK
+            </pre>
+        </div>
+
+        <script src='demo.js'></script>
+
+    </body>
+</html>

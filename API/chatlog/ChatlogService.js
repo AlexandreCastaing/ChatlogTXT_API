@@ -42,23 +42,29 @@ class ChatlogService{
         let hasPassword = ()=>{ // convert into bool
         switch(chatlogById.hasPassword.toLowerCase().trim())
             {
-                case "true":
+                case 'true':
+                case true:    
                 case "yes":
-                case "1":
+                case 1:   
+                case '1':
                 return true;
-                case "false":
+                case 'false':
+                case false:
                 case "no":
-                case "0":
-                case "null":
+                case 0:
+                case '0':
+                case null:
+                case 'null':
+                case "":
                 return false;
                 default:
                 return true;
             }
         }
-        console.log(hasPassword())
+
         if(hasPassword() == true){
             if(_password != chatlogById.password){
-                console.log("War {"+Log_Title+"}. Bad password.")
+                console.log("Err {"+Log_Title+"}. Bad password.")
                 return false;
             }
         }
@@ -150,23 +156,33 @@ class ChatlogService{
          return true; // OK
     }
 
-    readMessagesByIdChatlog(_idChatlog, _password){
+    readMessagesByIdChatlog(_idChatlog, _password, _nameChatlog){
 
         let Log_Title = "Read Messages By Id";
 
-        return this.readMessages((messages)=>{
+        let checkError = false;
+        let infoError = "";
+
+        let toReturn = this.readMessages((messages)=>{
 
             // idChatlog missing, shearch by name.
             if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+            if(_idChatlog == null) {
+                    infoError = "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+                    checkError=true; 
+                    return null;
+                }
 
             let chatlogById = this.getChatlogById(_idChatlog);
-            if(chatlogById==null) return;  
+            if(chatlogById==null) return [];  
 
              // check Password
-            if(!this.checkPassword(_idChatlog, _password, Log_Title)) return "Bad Password";
+            if(!this.checkPassword(_idChatlog, _password, Log_Title)){
+                infoError = "Err {"+Log_Title+"}. Bad Password.";
+                checkError=true; 
+                return null;
+            }
 
- 
             let messagesByIdChatlog = [];
             messages.forEach(message => {
                 if(message.idChatlog == _idChatlog)
@@ -179,6 +195,11 @@ class ChatlogService{
             return messagesByIdChatlog;
 
         });
+
+        if(checkError) {
+            return infoError;
+        }
+        return toReturn;
     }
 
     readMessages(){
@@ -221,13 +242,17 @@ class ChatlogService{
         return 0;
     }
 
-    changeMessage(_idMessage, isVisible, messagetext, color, effect, font, idChatlog, idUser, _password){
+    changeMessage(_idMessage, isVisible, messagetext, color, effect, font, idChatlog, idUser, _password, _nameChatlog){
         let Log_Title = "Changing Message";
 
         try{
 
-            if(_idMessage == null) return "Err "+Log_Title+": idMessage must be set";
+            if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
+             // idChatlog missing, shearch by name.
+             if(idChatlog == null) idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
+            if(idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+
             let chatlogById = this.getChatlogById(idChatlog);
             if(chatlogById==null) return;  
 
@@ -304,8 +329,8 @@ class ChatlogService{
 
         // shearch
         messages.forEach(message => {
-            if(!isNaN(message.idMessage))
-            maxId = Math.max(message.idMessage, maxId); 
+            if(!isNaN(message.idMessage) && message.idMessage.length > 0)
+                maxId = Math.max(message.idMessage, maxId); 
         }); 
 
         console.log("last id message finded = "+maxId);
@@ -328,8 +353,8 @@ class ChatlogService{
 
         // shearch
         chatlogs.forEach(c => {
-            if(!isNaN(c.idMessage))
-            maxId = Math.max(c.idMessage, maxId); 
+            if(!isNaN(c.idChatlog) && c.idChatlog.length > 0) 
+                maxId = Math.max(c.idChatlog, maxId); 
         }); 
 
         console.log("last id chatlog finded = "+maxId);
@@ -383,13 +408,17 @@ class ChatlogService{
         
     }
 
-    deleteMessage(_idMessage,idChatlog,idUser,_password){
+    deleteMessage(_idMessage,idChatlog,idUser,_password,_nameChatlog){
         let Log_Title = "Deleting Message";
 
         try{
 
-            if(_idMessage == null) return "Err "+Log_Title+": idMessage must be set";
+            if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
+            // idChatlog missing, shearch by name.
+            if(idChatlog == null) idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
+            if(idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+
             let chatlogById = this.getChatlogById(idChatlog);
             if(chatlogById==null) return;  
 
@@ -434,19 +463,23 @@ class ChatlogService{
         }
     }
 
-    readMessageById(_idMessage, _idChatlog, _password){
+    readMessageById(_idMessage, _idChatlog, _password, _nameChatlog){
         let Log_Title = "Reading Message";
 
         try{
 
-            if(_idMessage == null) return "Err "+Log_Title+": idMessage must be set";
+            if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
+            // idChatlog missing, shearch by name.
+            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
+            if(_idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+
             let chatlogById = this.getChatlogById(_idChatlog);
             if(chatlogById==null) return;  
 
              // check Password
-             if(idUser != chatlogById.idUser)
-                if(!this.checkPassword(_idChatlog, _password, Log_Title)) return "Bad Password";
+             //if(idUser != chatlogById.idUser)
+            if(!this.checkPassword(_idChatlog, _password, Log_Title)) return "Bad Password";
 
 
             // message 
@@ -493,7 +526,7 @@ class ChatlogService{
         })[0];
     }*/
 
-    deleteChatlog(_idChatlog, idUser){
+    deleteChatlog(_idChatlog, idUser,_nameChatlog){
         let Log_Title = "Deleting Chatlog";
 
         try{
@@ -538,7 +571,7 @@ class ChatlogService{
         }
     }
 
-    sendChatlog( idChatlog,hasPassword,password,idUser,isVisible,name,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages){
+    sendChatlog( idChatlog,hasPassword,password,idUser,isVisible,nameChatog,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages){
 
         let Log_Title = "Send Chatlog";
 
@@ -546,8 +579,10 @@ class ChatlogService{
 
             // Make Chatlog
             let chatlog = new ChatlogClass(++LAST_ID_CHATLOG);
-            let isNormalisedChatlog = this.makeAndNormalizeChatlog(chatlog, idChatlog,hasPassword,password,idUser,isVisible,name,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages, null);
-            if(isNormalisedChatlog != true) return "Err {"+Log_Title+"}. Please see the logs for more details (normalizeChatlog).";
+            idChatlog = chatlog.idChatlog;
+
+            let isNormalisedChatlog = this.makeAndNormalizeChatlog(chatlog, idChatlog,hasPassword,password,idUser,isVisible,nameChatog,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages,Log_Title, null);
+            if(isNormalisedChatlog != true) return isNormalisedChatlog;
 
             // convert to StructChatlog
             let structChatlog = ChatlogStructC_DTOClass.Chatlog_to_structChatlog(chatlog);
@@ -590,34 +625,9 @@ class ChatlogService{
         return chatlogs;
     }
 
-    readChatlogById(_idChatlog){
+    readChatlogById(_idChatlog, _nameChatlog){
         let Log_Title = "Reading Chatlog";
 
-        try{
-
-            // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
-
-            // chatlog
-            let chatlogById = this.getChatlogById(_idChatlog);
-
-            if(chatlogById == null){
-                console.log("Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ");
-                return null;
-            }
-
-            // OK 
-            return chatlogById;
-
-        }catch(e){
-            console.log(e);
-            return "Err {"+Log_Title+"}. Please see the logs for more details";
-        }
-    }
-    
-    readChatlogById(_idChatlog, _password){
-        let Log_Title = "Reading Chatlog";
 
         try{
 
@@ -644,7 +654,7 @@ class ChatlogService{
 
     getChatlogById(_idChatlog){
 
-        // idChatlog missing, shearch by name.
+
         if(_idChatlog == null) return;
 
         let chatlogs = []
@@ -674,7 +684,7 @@ class ChatlogService{
         try{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
+            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(name);
             if(_idChatlog == null)  return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
 
             // chatlog 
@@ -739,8 +749,8 @@ class ChatlogService{
         }
     }
 
-    makeAndNormalizeChatlog(chatlog, idChatlog,hasPassword,password,idUser,isVisible,name,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages, Log_Title, timestamp){
-        
+    makeAndNormalizeChatlog(chatlog, idChatlog,hasPassword,password,idUser,isVisible,nameC,description,color,effect,font,icon,colorMessages,effectMessages,fontMessages, Log_Title, timestamp){
+
         // Make Message
         chatlog.version = process.env.VERS;
         if(idChatlog != null) chatlog.idChatlog = idChatlog;
@@ -748,7 +758,7 @@ class ChatlogService{
         if(password != null) chatlog.password = password;
         if(idUser != null) chatlog.idUser = idUser;
         if(isVisible != null) chatlog.isVisible = isVisible; // format "0"/"1"
-        if(name != null) chatlog.name = name;
+        if(nameC != null) chatlog.name = nameC;
         if(description != null) chatlog.description = description;
         if(color != null) chatlog.color = color; // format "#FFFFFF"
         if(effect != null) chatlog.effect = effect;
@@ -757,7 +767,7 @@ class ChatlogService{
         if(colorMessages != null) chatlog.colorMessages = colorMessages; // format "#FFFFFF"
         if(effectMessages != null) chatlog.effectMessages = effectMessages;
         if(fontMessages != null) chatlog.fontMessages = fontMessages;
-
+       
         chatlog.timestamp = Date.now();    
         if(timestamp!=null)
             chatlog.timestamp = timestamp;    
@@ -771,9 +781,9 @@ class ChatlogService{
        let warnings = "";
 
         // Err
-        if(chatlog.idUser == null) return "Err "+Log_Title+": idUser must be set";
+        if(chatlog.idUser == null) return "Err {"+Log_Title+"}: idUser must be set";
         
-        if(chatlog.idChatlog == null) return "Err "+Log_Title+": idChatlog must be set";
+        if(chatlog.idChatlog == null) return "Err {"+Log_Title+"}: idChatlog must be set";
         
         // War
         if(chatlog.name == null) warnings += "War {"+Log_Title+"}: name is not set: default value '"+process.env.DEFAULT_NAME_CHATLOG+"'. \n";

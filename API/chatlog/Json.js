@@ -4,7 +4,7 @@ class Json{
 
     static message(message){
         if(message==null) return null;
-        return ( //console.log
+        return ( 
             {
                 idMessage: message.idMessage,
                 version: message.version,
@@ -23,11 +23,17 @@ class Json{
 
     static messages(_messages){
         let msgs_json = [];
-        if(_messages==null) return null;
-        _messages.forEach(message => {
-            msgs_json.push(this.message(message))
-        });
-        return msgs_json;
+        if(_messages==null) return [];
+
+        if(_messages.length > 0){
+            
+            _messages.forEach(message => {
+                msgs_json.push(this.message(message))
+            });
+            return msgs_json;
+        }
+        else
+            return [];
     }
 
     

@@ -9,6 +9,7 @@ console.log("==-==-==-==-==-==-==-==");
 const express = require('express'); 
 const app = express();
 let bodyParser = require('body-parser');
+let cors = require('cors');
 
 let ChatlogServiceClass = require("./ChatlogService.js");
 let RoutesClass = require("./Routes.js");
@@ -16,11 +17,13 @@ let RoutesClass = require("./Routes.js");
 // chatlog services
 const chatlogService = new ChatlogServiceClass();
 
+app.use(cors());
+
 // Routes on Routes.js file
 new RoutesClass(app, chatlogService, bodyParser);
 
-// Start express
 let port = process.env.PORT;
+// Start express
 app.listen(port, () => {
     console.log(`API ON: ${process.env.API_URL}:${process.env.PORT}`)
 })
