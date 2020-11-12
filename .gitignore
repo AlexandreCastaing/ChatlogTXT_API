@@ -1,4 +1,4 @@
 /API/node_modules
-/API/chatlog/*_dev.txt
+/API/chatlog/chatlog_txt/*_dev.txt
 /API/cmd.cmd
 /debug.log
