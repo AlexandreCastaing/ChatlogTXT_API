@@ -5,14 +5,14 @@ const Routes = class{
         // create application/json parser
         let jsonParser = _bodyParser.json();
 
-        let pstClr = (bc)=>((bc.indexOf("#")>=0)?'':'#'+bc)
+        let pstClr = (bc)=>bc.indexOf("#")>=0?bc:'#'+bc
 
         // SEND MESSAGE         idUser* , idChatlog* || nameChatlog* , isVisible , message , color , effect , font , pseudo , password 
         app.post('/Message', jsonParser, (req,res) => {
             let body = req.body;
             if(body != null) 
                 res.send( _chatlogService.sendMessage(
-                    body.idUser, body.isVisible, body.idChatlog, body.pseudo, body.message, +pstClr(body.color), body.effect, body.font, body.password, body.nameChatlog )         
+                    body.idUser, body.isVisible, body.idChatlog, body.pseudo, body.message, pstClr(body.color), body.effect, body.font, body.password, body.nameChatlog )         
                 ) 
             else 
                 res.status(500).send("Err: No Data Set.");
@@ -29,7 +29,7 @@ const Routes = class{
 
         // GET MESSAGE         idMessage* , idChatlog* || nameChatlog* , password
         app.get('/Message', jsonParser, (req,res) => {
-            let body = req.query; console.log(body)
+            let body = req.query; 
             if(body != null)
                 res.send(_chatlogService.readMessageById(body.idMessage, body.idChatlog, body.password, body.nameChatlog));
             else
@@ -92,7 +92,6 @@ const Routes = class{
         // GET CHATLOG          idChatlog* || nameChatlog* 
         app.get('/Chatlog', jsonParser, (req,res) => {
             let body = req.query;
-            console.log(body)
 
             if(body!=null)
                 res.send(_chatlogService.readChatlogById(body.idChatlog, body.name));

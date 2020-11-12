@@ -1,10 +1,4 @@
-// todo chiffrer mdp
-
-// todo traitement du fichier erroné lorsqu'il est vide...
-
-// ? todo récupérer un pseudo par son idUser
-        // inversement ?
-
+// todo mdp get
 
 let sendRequestUrl = (_url, _method, _data, _success)=>{
 

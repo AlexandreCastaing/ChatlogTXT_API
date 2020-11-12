@@ -78,8 +78,9 @@ class ChatlogService{
         try{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            _idChatlog = checkIdName.idChatlog;
 
             let chatlogById = this.getChatlogById(_idChatlog);
             if(chatlogById==null) return;  
@@ -122,7 +123,7 @@ class ChatlogService{
          if(idUser != null) message.idUser = idUser;
          if(isVisible != null) message.isVisible = isVisible; // format "0"/"1"
          if(idChatlog != null) message.idChatlog = idChatlog;
-         if(pseudo != null) message.pseudo = pseudo;
+         if(pseudo != null) message.pseudo = pseudo; 
          if(color != null) message.color = color; // format "#FFFFFF"
          if(effect != null) message.effect = effect;
          if(font != null) message.font = font;
@@ -166,12 +167,13 @@ class ChatlogService{
         let toReturn = this.readMessages((messages)=>{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) {
-                    infoError = "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
-                    checkError=true; 
-                    return null;
-                }
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true){
+                infoError = checkIdName;
+                checkError=true; 
+                return null;
+            }   
+            _idChatlog = checkIdName.idChatlog;
 
             let chatlogById = this.getChatlogById(_idChatlog);
             if(chatlogById==null) return [];  
@@ -190,7 +192,7 @@ class ChatlogService{
             });
 
             // sort by timestamp DESC
-            messagesByIdChatlog.sort(this.compareIndexFound);
+            messagesByIdChatlog.sort(this.compareIndexFound_timestamp);
     
             return messagesByIdChatlog;
 
@@ -226,7 +228,7 @@ class ChatlogService{
         }
 
         // sort by timestamp DESC
-        messages.sort(this.compareIndexFound);
+        messages.sort(this.compareIndexFound_timestamp);
 
         if(_filterMethod!=null){
             messages = _filterMethod(messages);
@@ -236,11 +238,20 @@ class ChatlogService{
         return JsonClass.messages(messages);
 
     }
-    compareIndexFound(a, b) {
+    compareIndexFound_timestamp(a, b) {
         if (a.timestamp < b.timestamp) { return 1; }
         if (a.timestamp > b.timestamp) { return -1; }
         return 0;
     }
+      
+    check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title){
+        if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
+        if(_idChatlog == null) 
+            if(_nameChatlog == null) 
+                return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+            else return "Err {"+Log_Title+"}: No chatlog '"+_nameChatlog+"' exists."; 
+        return {checking:true, idChatlog: _idChatlog};
+     }
 
     changeMessage(_idMessage, isVisible, messagetext, color, effect, font, idChatlog, idUser, _password, _nameChatlog){
         let Log_Title = "Changing Message";
@@ -250,8 +261,10 @@ class ChatlogService{
             if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
              // idChatlog missing, shearch by name.
-             if(idChatlog == null) idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+             let checkIdName = this.check_ById_orByName_Chatlog(idChatlog, _nameChatlog, Log_Title);
+             if(checkIdName.checking != true) return checkIdName;
+             idChatlog = checkIdName.idChatlog;
+       
 
             let chatlogById = this.getChatlogById(idChatlog);
             if(chatlogById==null) return;  
@@ -265,14 +278,12 @@ class ChatlogService{
             let messageById = this.getMessageById(_idMessage);
 
             if(messageById == null){
-                console.log("Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ";
             }
 
             // check message is from the user
             if(idUser != messageById.idUser){
-                console.log("Err {"+Log_Title+"}. Bad user. ");
-                return null;
+                return "Err {"+Log_Title+"}. Bad user. ";
             }
 
             // convert to StructMessage (we keep the old version for replace it on file)
@@ -283,8 +294,8 @@ class ChatlogService{
 
             // no change for nulls
              messageByIdCopy.isVisible = (isVisible != null) ? isVisible : messageById.isVisible;
-             messageByIdCopy.message = (messagetext != null) ? messagetext : messageById.message;
-             messageByIdCopy.color = (color != null) ? color : messageById.color;
+             messageByIdCopy.message = (messagetext != null) ? messagetext : messageById.message; 
+             messageByIdCopy.color = (color != null) ? color : messageById.color; 
              messageByIdCopy.effect = (effect != null) ? effect : messageById.effect;
              messageByIdCopy.font = (font != null) ? font : messageById.font;
             
@@ -300,7 +311,7 @@ class ChatlogService{
             if(hasNoError)
                 console.log("-message values replaced id="+messageById.idMessage+"");
             else
-                return console.log("Err {"+Log_Title+"}. Internal Error x_o.");
+                return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // reconvert StructMessage to Message 
             messageById = MessageStructM_DTOClass.structMessage_to_Message(structMessageCopy);
@@ -323,7 +334,7 @@ class ChatlogService{
         messages = this.getMessages();
 
         if(messages.length == 0 ) {
-            console.log("no message, first message will have id = "+maxId);
+            console.log("> no message on file, first message will have id = "+maxId);
             return maxId;
         }
 
@@ -333,7 +344,7 @@ class ChatlogService{
                 maxId = Math.max(message.idMessage, maxId); 
         }); 
 
-        console.log("last id message finded = "+maxId);
+        console.log("> last id message finded = "+maxId);
 
         return maxId;
         
@@ -347,7 +358,7 @@ class ChatlogService{
         chatlogs = this.getChatlogs();
 
         if(chatlogs.length == 0 ) {
-            console.log("no chatlogs, first chatlog will have id = "+maxId);
+            console.log("> no chatlog on file, first chatlog will have id = "+maxId);
             return maxId;
         }
 
@@ -357,7 +368,7 @@ class ChatlogService{
                 maxId = Math.max(c.idChatlog, maxId); 
         }); 
 
-        console.log("last id chatlog finded = "+maxId);
+        console.log("> last id chatlog finded = "+maxId);
 
         return maxId;
         
@@ -401,7 +412,8 @@ class ChatlogService{
             messages = MessageStructM_DTOClass.structMessages_to_Messages(structMessages);
             
         }catch(e){
-            console.log("Err {"+Log_Title+"}. Can't get messages...");
+            console.log(e);
+            return "Err {"+Log_Title+"}. Can't get messages.";
         }
 
         return messages;
@@ -416,8 +428,9 @@ class ChatlogService{
             if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
             // idChatlog missing, shearch by name.
-            if(idChatlog == null) idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+            let checkIdName = this.check_ById_orByName_Chatlog(idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            idChatlog = checkIdName.idChatlog;
 
             let chatlogById = this.getChatlogById(idChatlog);
             if(chatlogById==null) return;  
@@ -431,14 +444,12 @@ class ChatlogService{
             let messageById = this.getMessageById(_idMessage);
 
             if(messageById == null){
-                console.log("Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ";
             }
 
             // check message is from the user
             if(idUser != messageById.idUser){
-                console.log("Err {"+Log_Title+"}. Bad user. ");
-                return null;
+                return "Err {"+Log_Title+"}. Bad user. ";
             }
 
             // convert to StructMessage (we will replace datas by empty value)
@@ -452,7 +463,7 @@ class ChatlogService{
             if(hasNoError)
                 console.log("-message deleted id="+messageById.idMessage+"");
             else
-                return console.log("Err {"+Log_Title+"}. Internal Error x_o.");
+                return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // OK 
             return messageById;
@@ -471,8 +482,9 @@ class ChatlogService{
             if(_idMessage == null) return "Err {"+Log_Title+"}: idMessage must be set";
             
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}: idChatlog or nameChatlog must be set"; 
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            _idChatlog = checkIdName.idChatlog;
 
             let chatlogById = this.getChatlogById(_idChatlog);
             if(chatlogById==null) return;  
@@ -486,8 +498,7 @@ class ChatlogService{
             let messageById = this.getMessageById(_idMessage);
 
             if(messageById == null){
-                console.log("Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ";
             }
             // OK 
             return messageById;
@@ -497,34 +508,6 @@ class ChatlogService{
             return "Err {"+Log_Title+"}. Please see the logs for more details";
         }
     }
-    
-    /*readMessageById_Last_Timestamp_Mode(idMessage, _password){ 
-        
-        // check Password
-        let chatlogById = this.getChatlogById(_idChatlog);
-        if(chatlogById==null) return;
-        if(chatlogById.hasPassword){
-            if(_password != chatlogById.password){
-                console.log("War {"+Log_Title+"}. Bad password.")
-                return "BadPassword";
-            }
-        }
-        
-        return this.readMessages((messages)=>{
-
-            let messagesById = [];
-            messages.forEach(message => {
-                if(message.idMessage == idMessage)
-                    messagesById.push(message);
-            });
-
-            // sort by timestamp DESC (we want the most recent id)
-            messages.sort(this.compareIndexFound);
-
-            return messagesById;
-
-        })[0];
-    }*/
 
     deleteChatlog(_idChatlog, idUser,_nameChatlog){
         let Log_Title = "Deleting Chatlog";
@@ -532,21 +515,20 @@ class ChatlogService{
         try{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            _idChatlog = checkIdName.idChatlog;
 
             // chatlog 
             let chatlogById = this.getChatlogById(_idChatlog);
 
             if(chatlogById == null){
-                console.log("Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ";
             }
 
             // check if good user
             if(idUser != chatlogById.idUser){
-                console.log("Err {"+Log_Title+"}. Bad User. ");
-                return null;
+                return "Err {"+Log_Title+"}. Bad User. ";
             }
             
             // convert to StructChatlog (we will replace datas by empty value)
@@ -560,7 +542,7 @@ class ChatlogService{
             if(hasNoError)
                 console.log("-chatlog deleted id="+chatlogById.idChatlog+"");
             else
-                return console.log("Err {"+Log_Title+"}. Internal Error x_o.");
+                return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // OK 
             return chatlogById;
@@ -619,7 +601,9 @@ class ChatlogService{
             chatlogs = ChatlogStructC_DTOClass.structChatlogs_to_Chatlogs(structChatlogs);
             
         }catch(e){
-            console.log("Err {"+Log_Title+"}. Can't get chatlogs...");
+            console.log(e);
+            
+            return "Err {"+Log_Title+"}. Can't get chatlogs.";
         }
 
         return chatlogs;
@@ -632,15 +616,15 @@ class ChatlogService{
         try{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(_nameChatlog);
-            if(_idChatlog == null) return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, _nameChatlog, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            _idChatlog = checkIdName.idChatlog;
 
             // chatlog
             let chatlogById = this.getChatlogById(_idChatlog);
 
             if(chatlogById == null){
-                console.log("Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ";
             }
 
             // OK 
@@ -684,22 +668,21 @@ class ChatlogService{
         try{
 
             // idChatlog missing, shearch by name.
-            if(_idChatlog == null) _idChatlog = this.getLastIdChatlogByNameChatlog(name);
-            if(_idChatlog == null)  return "Err {"+Log_Title+"}. idChatlog or nameChatlog must be set.";
+            let checkIdName = this.check_ById_orByName_Chatlog(_idChatlog, name, Log_Title);
+            if(checkIdName.checking != true) return checkIdName;
+            _idChatlog = checkIdName.idChatlog;
 
             // chatlog 
             let chatlogById = this.getChatlogById(_idChatlog);
 
             if(chatlogById == null){
-                console.log("Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ");
-                return null;
+                return "Err {"+Log_Title+"}. No chatlog find with the id "+_idChatlog+". ";
             }
 
         
             // check if good user
             if(_idUser != chatlogById.idUser){
-                console.log("Err {"+Log_Title+"}. Bad User. ");
-                return null;
+                return "Err {"+Log_Title+"}. Bad User. ";
             }
 
             // convert to StructChatlog (we keep the old version for replace it on file)
@@ -734,7 +717,7 @@ class ChatlogService{
             if(hasNoError)
                 console.log("-chatlog values replaced id="+chatlogById.idChatlog+"");
             else
-                return console.log("Err {"+Log_Title+"}. Internal Error x_o.");
+                return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // reconvert StructChatlog to Chatlog
             chatlogById = ChatlogStructC_DTOClass.structChatlog_to_Chatlog(structChatlogCopy);
@@ -819,13 +802,18 @@ class ChatlogService{
             chatlogsByNameChatlog.push(c);
         });
 
+        // sort by timestamp DESC
+        chatlogs.sort(this.compareIndexFound_timestamp);
+    
         return chatlogsByNameChatlog;
    }
 
    getLastIdChatlogByNameChatlog(_name){
         let chatlogs=this.getChatlogsByNameChatlog(_name);
+        
+        
         if(chatlogs.length > 0)
-            return chatlogs[chatlogs.length-1].idChatlog;
+            return chatlogs[chatlogs.length-1].idChatlog;  //chatlogs[chatlogs.length-1].idChatlog 
         else
             return null;
    }

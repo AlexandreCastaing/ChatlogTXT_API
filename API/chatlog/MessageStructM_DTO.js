@@ -21,6 +21,7 @@ const MessageStructDTO = class{
                     case 'pseudo': message.pseudo = val; break;
                     case 'effect': message.effect = val; break;
                     case 'font': message.font = val; break;
+                    case 'color': message.color = val; break;
                     case 'message': message.message = val; break;
                     case 'timestamp': message.timestamp = val; break;
                 }
@@ -45,6 +46,7 @@ const MessageStructDTO = class{
                     case 'isVisible': block.val = _message.isVisible; break;
                     case 'idChatlog': block.val = _message.idChatlog; break;
                     case 'pseudo': block.val = _message.pseudo; break;
+                    case 'color': block.val = _message.color; break;
                     case 'effect': block.val = _message.effect; break;
                     case 'font': block.val = _message.font; break;
                     case 'message': block.val = _message.message; break;
