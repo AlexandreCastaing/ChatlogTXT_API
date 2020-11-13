@@ -9,6 +9,7 @@ let ChatlogStructC_DTOClass = require("./ChatlogStructC_DTO.js");
 let TextFileClass = require("./TextFile.js");
 let JsonClass = require("./Json.js");
 const StructChatlog = require("./StructChatlog.js");
+const Json = require("./Json.js");
 
 let LAST_ID_MESSAGE = 0;
 let LAST_ID_CHATLOG = 0;
@@ -107,7 +108,7 @@ class ChatlogService{
             message = MessageStructM_DTOClass.structMessage_to_Message(structMessage);
 
             // OK 
-            return message;
+            return JsonClass.message(message);
 
         }catch(e){
             console.log(e);
@@ -194,7 +195,7 @@ class ChatlogService{
             // sort by timestamp DESC
             messagesByIdChatlog.sort(this.compareIndexFound_timestamp);
     
-            return messagesByIdChatlog;
+            return JsonClass.messages(messagesByIdChatlog);
 
         });
 
@@ -235,7 +236,7 @@ class ChatlogService{
         }
 
         // OK
-        return JsonClass.messages(messages);
+        return messages;
 
     }
     compareIndexFound_timestamp(a, b) {
@@ -317,7 +318,7 @@ class ChatlogService{
             messageById = MessageStructM_DTOClass.structMessage_to_Message(structMessageCopy);
 
             // OK 
-            return messageById;
+            return JsonClass.message(messageById);
 
 
         }catch(e){
@@ -466,7 +467,7 @@ class ChatlogService{
                 return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // OK 
-            return messageById;
+            return JsonClass.message(messageById);
 
         }catch(e){
             console.log(e);
@@ -501,7 +502,7 @@ class ChatlogService{
                 return "Err {"+Log_Title+"}. No message find with the id "+_idMessage+". ";
             }
             // OK 
-            return messageById;
+            return JsonClass.message( messageById );
 
         }catch(e){
             console.log(e);
@@ -545,7 +546,7 @@ class ChatlogService{
                 return "Err {"+Log_Title+"}. Internal Error x_o.";
             
             // OK 
-            return chatlogById;
+            return JsonClass.chatlog(chatlogById);
 
         }catch(e){
             console.log(e);
@@ -578,7 +579,7 @@ class ChatlogService{
             chatlog = ChatlogStructC_DTOClass.structChatlog_to_Chatlog(structChatlog);
 
             // OK 
-            return chatlog;
+            return JsonClass.chatlog(chatlog);
 
         }catch(e){
             console.log(e);
@@ -609,6 +610,16 @@ class ChatlogService{
         return chatlogs;
     }
 
+    readChatlogs(){
+        let Log_Title = "Reading Chatlogs";
+        try{
+            return JsonClass.chatlogs(this.getChatlogs());
+        }catch(e){
+            console.log(e);    
+            return "Err {"+Log_Title+"}. Can't get chatlogs (json convert).";
+        }
+    }
+
     readChatlogById(_idChatlog, _nameChatlog){
         let Log_Title = "Reading Chatlog";
 
@@ -628,7 +639,7 @@ class ChatlogService{
             }
 
             // OK 
-            return chatlogById;
+            return JsonClass.chatlog(chatlogById);
 
         }catch(e){
             console.log(e);
@@ -723,7 +734,7 @@ class ChatlogService{
             chatlogById = ChatlogStructC_DTOClass.structChatlog_to_Chatlog(structChatlogCopy);
 
             // OK 
-            return chatlogById;
+            return JsonClass.chatlog(chatlogById);
 
 
         }catch(e){

@@ -1,4 +1,6 @@
 // todo mdp get
+// todo return json of chatlog
+// separe method return json & others 
 
 let sendRequestUrl = (_url, _method, _data, _success)=>{
 

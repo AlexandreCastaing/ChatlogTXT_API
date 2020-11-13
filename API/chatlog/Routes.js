@@ -86,7 +86,7 @@ const Routes = class{
 
         // GET CHATLOGS         
         app.get('/Chatlogs', jsonParser, (req,res) => {
-            res.send(_chatlogService.getChatlogs());
+            res.send(_chatlogService.readChatlogs());
         })
 
         // GET CHATLOG          idChatlog* || nameChatlog* 
