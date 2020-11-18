@@ -5,7 +5,12 @@ const Routes = class{
         // create application/json parser
         let jsonParser = _bodyParser.json();
 
-        let pstClr = (bc)=>bc.indexOf("#")>=0?bc:'#'+bc
+        let pstClr = (bc)=>{
+            if(bc==null||bc==undefined)
+                return ""
+            else 
+                ((bc)=>bc.indexOf("#")>=0?bc:'#'+bc)
+        }
 
         // SEND MESSAGE         idUser* , idChatlog* || nameChatlog* , isVisible , message , color , effect , font , pseudo , password 
         app.post('/Message', jsonParser, (req,res) => {

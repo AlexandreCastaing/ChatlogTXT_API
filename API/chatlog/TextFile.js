@@ -3,7 +3,7 @@
 
 //todo: to remove require('shelljs/global');
 
-let StructClass = require("./Struct.js");
+let StructClass = require("./struct.js");
 
 const TextFile = class{
 

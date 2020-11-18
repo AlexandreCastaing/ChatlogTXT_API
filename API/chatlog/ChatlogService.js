@@ -1,15 +1,15 @@
 // Chatlog service 
 
-let MessageClass = require("./Message.js");
-let ChatlogClass = require("./Chatlog.js");
-let StructMessageClass = require("./StructMessage.js");
-let StructChatlogClass = require("./StructChatlog.js");
-let MessageStructM_DTOClass = require("./MessageStructM_DTO.js");
-let ChatlogStructC_DTOClass = require("./ChatlogStructC_DTO.js");
-let TextFileClass = require("./TextFile.js");
-let JsonClass = require("./Json.js");
-const StructChatlog = require("./StructChatlog.js");
-const Json = require("./Json.js");
+let MessageClass = require("./message.js");
+let ChatlogClass = require("./chatlog.js");
+let StructMessageClass = require("./structMessage.js");
+let StructChatlogClass = require("./structChatlog.js");
+let MessageStructM_DTOClass = require("./messageStructM_DTO.js");
+let ChatlogStructC_DTOClass = require("./chatlogStructC_DTO.js");
+let TextFileClass = require("./textFile.js");
+let JsonClass = require("./json.js");
+const StructChatlog = require("./structChatlog.js");
+const Json = require("./json.js");
 
 let LAST_ID_MESSAGE = 0;
 let LAST_ID_CHATLOG = 0;

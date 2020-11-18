@@ -17,7 +17,7 @@ class Json{
                 effect: message.effect,
                 font: message.font,
                 message: message.message,
-                //timestamp: message.timestamp,       
+                timestamp: message.timestamp,       
             }
         )
     }

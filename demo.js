@@ -137,10 +137,10 @@ let refresh_All_HTML_INPUTDATA = ()=>{
 
     chatlogJson = {};
     if(chatlog.idChatlog.length>0) chatlogJson.idChatlog = chatlog.idChatlog 
-     chatlogJson.hasPassword = '' + chatlog.hasPassword
+    chatlogJson.hasPassword = '' + chatlog.hasPassword
     if(chatlog.password.length>0) chatlogJson.password = chatlog.password 
     if(chatlog.idUser.length>0) chatlogJson.idUser = chatlog.idUser
-     chatlogJson.isVisible = '' + chatlog.isVisible 
+    chatlogJson.isVisible = '' + chatlog.isVisible 
     if(chatlog.name.length>0) chatlogJson.name  = chatlog.name
     if(chatlog.description.length>0) chatlogJson.description = chatlog.description 
     if(chatlog.color.length>0) chatlogJson.color = chatlog.color
@@ -155,7 +155,7 @@ let refresh_All_HTML_INPUTDATA = ()=>{
     if(message.idUser.length>0) messageJson.idUser = message.idUser
     if(message.idMessage.length>0) messageJson.idMessage = message.idMessage
     if(message.idChatlog.length>0) messageJson.idChatlog = message.idChatlog
-     messageJson.isVisible = '' + message.isVisible
+    messageJson.isVisible = '' + message.isVisible
     if(message.message.length>0) messageJson.message = message.message
     if(message.color.length>0) messageJson.color =  message.color
     if(message.effect.length>0) messageJson.effect = message.effect
@@ -166,7 +166,6 @@ let refresh_All_HTML_INPUTDATA = ()=>{
 
     console.log(chatlog)
     console.log(message)
-
 }
 refresh_All_HTML_INPUTDATA();
 

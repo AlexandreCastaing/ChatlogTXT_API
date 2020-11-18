@@ -1,6 +1,6 @@
 //Util who convert Message to MessageStruct & Versa.
-let MessageClass = require("./Message.js");
-let StructMessageClass = require("./StructMessage.js");
+let MessageClass = require("./message.js");
+let StructMessageClass = require("./structMessage.js");
 
 const MessageStructDTO = class{
 

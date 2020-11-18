@@ -1,6 +1,6 @@
 //Util who convert Message to MessageStruct & Versa.
-let ChatlogClass = require("./Chatlog.js");
-let StructChatlogClass = require("./StructChatlog.js");
+let ChatlogClass = require("./chatlog.js");
+let StructChatlogClass = require("./structChatlog.js");
 
 const ChatlogStructDTO = class{
 

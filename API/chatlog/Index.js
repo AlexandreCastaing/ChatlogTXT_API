@@ -11,8 +11,8 @@ const app = express();
 let bodyParser = require('body-parser');
 let cors = require('cors');
 
-let ChatlogServiceClass = require("./ChatlogService.js");
-let RoutesClass = require("./Routes.js");
+let ChatlogServiceClass = require("./chatlogService.js");
+let RoutesClass = require("./routes.js");
 
 // chatlog services
 const chatlogService = new ChatlogServiceClass();
