@@ -334,11 +334,19 @@ class ChatlogService{
 
         messages = this.getMessages();
 
-        if(messages.length == 0 ) {
+        let arr = (a)=>{
+            try{
+                if(Array.isArray(a)) return true;
+                if(variable.constructor === a)return true;
+            }catch(e){}
+            return false;
+        }
+
+        if(!messages || messages == undefined || messages == null || messages.length == 0 || !arr(messages)) {
             console.log("> no message on file, first message will have id = "+maxId);
             return maxId;
         }
-
+        
         // shearch
         messages.forEach(message => {
             if(!isNaN(message.idMessage) && message.idMessage.length > 0)
@@ -358,7 +366,15 @@ class ChatlogService{
 
         chatlogs = this.getChatlogs();
 
-        if(chatlogs.length == 0 ) {
+        let arr = (a)=>{
+            try{
+                if(Array.isArray(a)) return true;
+                if(variable.constructor === a)return true;
+            }catch(e){}
+            return false;
+        }
+
+        if(!chatlogs  || chatlogs == undefined || chatlogs == null || chatlogs.length == 0 || !arr(chatlogs)) {
             console.log("> no chatlog on file, first chatlog will have id = "+maxId);
             return maxId;
         }

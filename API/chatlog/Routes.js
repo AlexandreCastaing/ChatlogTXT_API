@@ -8,8 +8,10 @@ const Routes = class{
         let pstClr = (bc)=>{
             if(bc==null||bc==undefined)
                 return ""
-            else 
-                ((bc)=>bc.indexOf("#")>=0?bc:'#'+bc)
+            else {
+                let r = ((_bc)=>_bc.indexOf("#")>=0?_bc:'#'+_bc)
+                return r(bc)
+            }
         }
 
         // SEND MESSAGE         idUser* , idChatlog* || nameChatlog* , isVisible , message , color , effect , font , pseudo , password 
